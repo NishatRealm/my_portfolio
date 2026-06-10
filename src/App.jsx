@@ -2,20 +2,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('frontend');
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [currentRole, setCurrentRole] = useState('Computer Science Student');
-  
-  const roles = ['Machine Learning Learner', 'NLP Enthusiast', 'Front-end Developer', 'Debater & Speaker'];
+  const [tickerText, setTickerText] = useState('Thesis Pipeline Active');
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    let roleIndex = 0;
+    const alerts = [
+      'Research: Glioma Segmentation Active',
+      'AWS Cloud Certified',
+      'DIU NLP & ML Lab Track Running',
+      'CGPA 3.79 Milestone Verified'
+    ];
+    let idx = 0;
     const interval = setInterval(() => {
-      roleIndex = (roleIndex + 1) % roles.length;
-      setCurrentRole(roles[roleIndex]);
-    }, 2800);
+      idx = (idx + 1) % alerts.length;
+      setTickerText(alerts[idx]);
+    }, 3200);
     return () => clearInterval(interval);
   }, []);
 
@@ -30,12 +33,12 @@ export default function App() {
     const pts = Array.from({ length: 140 }, () => ({
       x: Math.random() * W,
       y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.25,
-      vy: (Math.random() - 0.5) * 0.25,
-      r: Math.random() * 1.4 + 0.3,
-      life: Math.random() * 150,
-      maxL: Math.random() * 300 + 150,
-      fire: Math.random() > 0.82,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: (Math.random() - 0.5) * 0.2,
+      r: Math.random() * 1.5 + 0.4,
+      life: Math.random() * 200,
+      maxL: Math.random() * 400 + 200,
+      glow: Math.random() > 0.82,
       alpha: 0
     }));
 
@@ -50,12 +53,12 @@ export default function App() {
     const loop = () => {
       ctx.clearRect(0, 0, W, H);
       
-      ctx.strokeStyle = 'rgba(255,77,26,0.015)';
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.015)';
       ctx.lineWidth = 0.5;
-      for (let x = 0; x <= W; x += 90) {
+      for (let x = 0; x <= W; x += 80) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
       }
-      for (let y = 0; y <= H; y += 90) {
+      for (let y = 0; y <= H; y += 80) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
       }
 
@@ -66,20 +69,20 @@ export default function App() {
 
         const dx = p.x - mx, dy = p.y - my, d = Math.hypot(dx, dy);
         if (d < 140) {
-          const f = (140 - d) / 140 * 0.6;
+          const f = (140 - d) / 140 * 0.5;
           p.x += (dx / d) * f; p.y += (dy / d) * f;
         }
 
-        if (p.life >= p.maxL || p.x < -10 || p.x > W + 10 || p.y < -10 || p.y > H + 10) {
+        if (p.life >= p.maxL || p.x < 0 || p.x > W || p.y < 0 || p.y > H) {
           p.x = Math.random() * W; p.y = Math.random() * H; p.life = 0;
         }
 
         ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        if (p.fire) {
-          ctx.fillStyle = `rgba(255,77,26,${p.alpha * 0.85})`;
-          ctx.shadowColor = '#ff4d1a'; ctx.shadowBlur = 8;
+        if (p.glow) {
+          ctx.fillStyle = `rgba(168, 85, 247, ${p.alpha * 0.9})`;
+          ctx.shadowColor = '#a855f7'; ctx.shadowBlur = 10;
         } else {
-          ctx.fillStyle = `rgba(242,237,228,${p.alpha * 0.3})`;
+          ctx.fillStyle = `rgba(242, 237, 228, ${p.alpha * 0.25})`;
           ctx.shadowBlur = 0;
         }
         ctx.fill();
@@ -94,232 +97,327 @@ export default function App() {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleContact = (e) => {
     e.preventDefault();
     setFormSubmitted(true);
     setTimeout(() => {
       setFormData({ name: '', email: '', message: '' });
       setFormSubmitted(false);
-    }, 2500);
+    }, 2000);
   };
 
   return (
-    <div className="portfolio-wrapper">
+    <div className="bento-portfolio-root">
       <canvas id="bgCanvas" ref={canvasRef}></canvas>
 
-      <nav id="mainNav" className="scrolled">
-        <div className="logo">
-          <div className="logo-badge"><span>NJ</span></div>
-          Nishat
-        </div>
-        <div className="nav-links">
+      <nav className="fixed-nav">
+        <div className="nav-brand">NISHAT<span>.</span></div>
+        <div className="nav-menu">
+          <a href="#home">Home</a>
           <a href="#about">About</a>
           <a href="#skills">Skills</a>
           <a href="#projects">Projects</a>
-          <a href="#education">Education</a>
+          <a href="#awards">Awards</a>
           <a href="#contact">Contact</a>
         </div>
-        <a href="/my-resume.pdf" download className="nav-cta">Download CV</a>
+        <a href="/my-resume.pdf" download className="resume-btn">My Resume ↗</a>
       </nav>
 
-      <section className="hero" id="home">
-        <div className="hero-top">
-          <div className="hero-eyebrow">
-            <div className="eyebrow-badge"><div className="e-dot"></div>Available for Research</div>
-            <div className="eyebrow-line"></div>
-            <span style={{ fontSize: '11px', color: 'var(--dim)', letterSpacing: '.14em' }}>Portfolio 2026</span>
-          </div>
+      <section className="sec-wrapper" id="home">
+        <div className="bento-master-grid">
+          
+          <div className="bento-card col-span-2 row-span-2 main-profile-card">
+            <div className="profile-badge-strip">
+              <span>SOFTWARE ENGINEER</span>
+              <span className="bullet-sep">•</span>
+              <span>RESEARCH ENTHUSIAST</span>
+              <span className="bullet-sep">•</span>
+              <span>TECHNICAL PM</span>
+            </div>
+            
+            <div className="profile-main-content-layout">
+              <div className="bento-profile-img-frame">
+                <img src="/profile.jpg" alt="Noushin Jahan Nishat" />
+                <div className="img-glow-overlay"></div>
+              </div>
 
-          <div className="hero-name">
-            <span className="hero-num" aria-hidden="true">CSE</span>
-            <span className="hn-row hn1"><span className="w">Noushin</span></span>
-            <span className="hn-row hn2"><span className="w">Jahan</span></span>
-            <span className="hn-row hn3"><span className="w">Nishat</span></span>
-          </div>
+              <div className="profile-hero-title">
+                <h1>Noushin</h1>
+                <h1>Jahan</h1>
+                <h1 className="glow-text-purple">Nishat</h1>
+              </div>
+            </div>
 
-          <div className="hero-sub">
-            <div className="role-pill">{currentRole}</div>
-            <div className="sub-sep"></div>
-            <span className="sub-note">ML Researcher · NLP Enthusiast · Speaker</span>
-          </div>
-
-          <div className="hero-bot" style={{ marginTop: '64px' }}>
-            <p className="hero-bio">
-              Computer Science & Engineering Student at <strong>Daffodil International University</strong>. Focusing on predictive machine learning classifiers, Bangla parsing architectures, and web interfaces.
+            <p className="profile-desc-p">
+              A passionate and dedicated Computer Science & Engineering Graduate from Daffodil International University with strong skills in software development, technical problem-solving, and deep learning research.
             </p>
-            <div className="hero-actions">
-              <a href="#projects" className="btn-fire">View Projects →</a>
-              <a href="#contact" className="btn-ghost">Connect</a>
+            <div className="card-corner-icon">+</div>
+          </div>
+
+          <div className="bento-card live-ticker-card">
+            <div className="ticker-status-light">
+              <span className="pulse-dot-purple"></span>
+              <span className="ticker-label">LATEST ACTIVITY:</span>
+            </div>
+            <div className="ticker-text-view">{tickerText}</div>
+          </div>
+
+          <a href="#about" className="bento-card interaction-link-card">
+            <div className="link-card-sub">IDENTITY METRICS</div>
+            <h2>Self Summary</h2>
+            <div className="arrow-action-icon">→</div>
+          </a>
+
+          <a href="#projects" className="bento-card interaction-link-card purple-gradient-accent">
+            <div className="link-card-sub">SHOWCASE</div>
+            <h2>Core Projects</h2>
+            <div className="arrow-action-icon">→</div>
+          </a>
+
+          <div className="bento-card stat-pill-card">
+            <div className="p-stat-box">
+              <h3>3.79</h3>
+              <p>DIU CGPA</p>
+            </div>
+            <div className="p-stat-box">
+              <h3>+15</h3>
+              <p>TECH TOOLS</p>
+            </div>
+            <div className="p-stat-box">
+              <h3>5+</h3>
+              <p>BUILT PROJECTS</p>
             </div>
           </div>
-        </div>
 
-        <div className="hero-stats">
-          <div className="hs"><div className="hs-n">3.76</div><div className="hs-l">CGPA Record</div></div>
-          <div className="hs"><div className="hs-n">10+</div><div className="hs-l">Tech Stack</div></div>
-          <div className="hs"><div className="hs-n">3+</div><div className="hs-l">Core Projects</div></div>
+          <a href="#contact" className="bento-card work-together-cta-card col-span-2">
+            <div className="cta-flex-wrap">
+              <h2>Let's work <span>together.</span></h2>
+              <div className="cta-plus-icon">+</div>
+            </div>
+          </a>
+
         </div>
       </section>
 
-      <section className="sec" id="about">
-        <div className="wrap">
-          <div className="about-grid">
-            <div className="about-content">
-              <span className="sec-tag">01 — Core Identity</span>
-              <h2 className="sec-h">Who I Am</h2>
-              <p className="about-p">
-                I am <span className="hl">Noushin Jahan Nishat</span> — an engineer dedicated to machine intelligence architectures, processing mixed categorical-numerical datasets, and working with deep learning structures.
-              </p>
-              <p className="about-p">
-                When I am not setting up complex coding environments inside stable <span className="hl">Anaconda</span> targets, I engage in structural argument styles, achieving <strong>Best Voice Speaker</strong> at the Inter-Hall Debate Tournament.
-              </p>
-            </div>
-          </div>
+      <section className="sec-wrapper" id="about">
+        <div className="section-header-wrap">
+          <div className="decoration-star">✦</div>
+          <h2 className="section-title-text">SELF-SUMMARY</h2>
+          <div className="decoration-star">✦</div>
         </div>
-      </section>
-
-      <section className="sec" id="skills">
-        <div className="wrap">
-          <div className="skills-layout">
-            <div>
-              <span className="sec-tag">02 — Stack</span>
-              <h2 className="sec-h">What I Work With</h2>
-              <div className="sk-tabs" style={{ marginTop: '40px' }}>
-                <button className={`sktab ${activeTab === 'frontend' ? 'on' : ''}`} onClick={() => setActiveTab('frontend')}>
-                  <span>🎨 Web Dev</span>
-                </button>
-                <button className={`sktab ${activeTab === 'ml' ? 'on' : ''}`} onClick={() => setActiveTab('ml')}>
-                  <span>🤖 Data Science & ML</span>
-                </button>
-                <button className={`sktab ${activeTab === 'tools' ? 'on' : ''}`} onClick={() => setActiveTab('tools')}>
-                  <span>🛠 Environments</span>
-                </button>
+        
+        <div className="about-bento-layout">
+          <div className="bento-card about-narrative-card">
+            <div className="profile-tag-row">
+              <span className="p-tag">DIU CSE GRADUATE</span>
+              <span className="p-tag">DEEP LEARNING</span>
+              <span className="p-tag">AWS GRADUATE</span>
+            </div>
+            <h3>Professional Profile</h3>
+            <p>
+              I am a fast learner with strong leadership and communication skills, eager to contribute to team success and grow in a professional environment. Guided by high honesty, discipline, and standard values.
+            </p>
+            
+            <div className="academic-timeline-wrap">
+              <h4>Academic Records</h4>
+              <div className="timeline-item">
+                <h5>B.Sc. in Computer Science & Engineering (2022 - 2026)</h5>
+                <p>Daffodil International University (DIU) | <strong>CGPA: 3.79 / 4.00</strong></p>
               </div>
-            </div>
-            <div className="sk-panels" style={{ paddingTop: '10px' }}>
-              {activeTab === 'frontend' && (
-                <div className="sk-panel on">
-                  <div className="skpill"><span className="skdot" style={{ background: '#f97316' }}></span>HTML5</div>
-                  <div className="skpill"><span className="skdot" style={{ background: '#38bdf8' }}></span>CSS3</div>
-                  <div className="skpill"><span className="skdot" style={{ background: '#fbbf24' }}></span>JavaScript</div>
-                  <div className="skpill"><span className="skdot" style={{ background: '#a78bfa' }}></span>Responsive Design</div>
-                </div>
-              )}
-              {activeTab === 'ml' && (
-                <div className="sk-panel on">
-                  <div className="skpill"><span className="skdot" style={{ background: '#4ade80' }}></span>Python</div>
-                  <div className="skpill"><span className="skdot" style={{ background: '#fb923c' }}></span>Machine Learning</div>
-                  <div className="skpill"><span className="skdot" style={{ background: '#fb7185' }}></span>Natural Language Processing</div>
-                  <div className="skpill"><span className="skdot" style={{ background: '#38bdf8' }}></span>Categorical Representations</div>
-                </div>
-              )}
-              {activeTab === 'tools' && (
-                <div className="sk-panel on">
-                  <div className="skpill"><span className="skdot" style={{ background: '#a78bfa' }}></span>Git & GitHub</div>
-                  <div className="skpill"><span className="skdot" style={{ background: '#4ade80' }}></span>Anaconda Desktop</div>
-                  <div className="skpill"><span className="skdot" style={{ background: '#38bdf8' }}></span>VS Code IDE</div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="sec" id="projects">
-        <div className="wrap">
-          <span className="sec-tag">03 — Portfolio Work</span>
-          <h2 className="sec-h">Engineering Projects</h2>
-          <div className="proj-list">
-            <div className="proj-item">
-              <div className="proj-n">01</div>
-              <div className="proj-body">
-                <h3>Job Placement Readiness Prediction Pipeline</h3>
-                <p>An intelligence model analyzing parameters to pre-evaluate student job placement readiness across private university systems in Bangladesh.</p>
-                <div className="proj-tags"><span className="ptag">Python</span><span className="ptag">ML</span><span className="ptag">Classification</span></div>
+              <div className="timeline-item">
+                <h5>Higher Secondary Certificate - HSC (2020)</h5>
+                <p>Dhaka City College | <strong>GPA: 5.00 / 5.00</strong></p>
               </div>
-            </div>
-            <div className="proj-item">
-              <div className="proj-n">02</div>
-              <div className="proj-body">
-                <h3>DHCP and Proxy System Deployment</h3>
-                <p>Network routing design implementing static network subnet spaces, precise gateway parameters, and granular server restrictions.</p>
-                <div className="proj-tags"><span className="ptag">Infrastructure</span><span className="ptag">Proxy Server</span><span className="ptag">DHCP Configuration</span></div>
-              </div>
-            </div>
-            <div className="proj-item">
-              <div className="proj-n">03</div>
-              <div className="proj-body">
-                <h3>Computer Graphics Matrix Transformer</h3>
-                <p>Mathematics algorithm sets supporting structural rendering routines, shearing logic, and geometric plane rotations.</p>
-                <div className="proj-tags"><span className="ptag">Computer Graphics</span><span className="ptag">C++</span><span className="ptag">Algorithms</span></div>
+              <div className="timeline-item">
+                <h5>Secondary School Certificate - SSC (2018)</h5>
+                <p>Shamlapur High School | <strong>GPA: 5.00 / 5.00</strong></p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="sec" id="education">
-        <div className="wrap">
-          <span className="sec-tag">04 — Milestones</span>
-          <h2 className="sec-h">Education Track</h2>
-          <div style={{ marginTop: '60px' }}>
-            <div className="edu-row">
-              <div className="edu-date">Ongoing Track</div>
-              <div className="edu-body">
-                <h3>Computer Science & Engineering</h3>
-                <p><strong>Daffodil International University</strong> — Current CGPA 3.76. Specialized interest branches across machine data models, deep neural language translation frameworks, and computer graphics loops.</p>
-              </div>
+      <section className="sec-wrapper" id="skills">
+        <div className="section-header-wrap">
+          <span className="section-sub-tag">// CAPABILITIES</span>
+          <h2 className="section-title-text">Skills & Stack</h2>
+        </div>
+
+        <div className="skills-bento-grid">
+          
+          <div className="bento-card skill-block">
+            <div className="skill-header"><span>01</span> Programming Languages</div>
+            <div className="skill-pills-wrap">
+              <span className="skill-pill">Python</span>
+              <span className="skill-pill">C</span>
+              <span className="skill-pill">C++</span>
+              <span className="skill-pill">Java</span>
+              <span className="skill-pill">JavaScript</span>
+              <span className="skill-pill">PHP</span>
+              <span className="skill-pill">SQL</span>
+              <span className="skill-pill">HTML</span>
+              <span className="skill-pill">CSS</span>
             </div>
-            <div className="edu-row">
-              <div className="edu-date">Higher Secondary</div>
-              <div className="edu-body">
-                <h3>Dhaka City College</h3>
-                <p>Science Discipline. Successfully validated track processing standard benchmarks with a absolute score profile of <strong>GPA 5.00</strong>.</p>
-              </div>
+          </div>
+
+          <div className="bento-card skill-block">
+            <div className="skill-header"><span>02</span> Frameworks & Libraries</div>
+            <div className="skill-pills-wrap">
+              <span className="skill-pill">React</span>
+              <span className="skill-pill">Next.js</span>
+              <span className="skill-pill">Node.js</span>
+              <span className="skill-pill">Express.js</span>
+              <span className="skill-pill">Tailwind CSS</span>
+              <span className="skill-pill">NumPy</span>
             </div>
-            <div className="edu-row">
-              <div className="edu-date">Secondary School</div>
-              <div className="edu-body">
-                <h3>Shhamlapur High School</h3>
-                <p>Science Baseline Program. Completed track certificates processing with an explicit profile metric evaluation of <strong>GPA 5.00</strong>.</p>
-              </div>
+          </div>
+
+          <div className="bento-card skill-block">
+            <div className="skill-header"><span>03</span> Databases, Tools & UI</div>
+            <div className="skill-pills-wrap">
+              <span className="skill-pill">MongoDB</span>
+              <span className="skill-pill">Firebase</span>
+              <span className="skill-pill">Git & GitHub</span>
+              <span className="skill-pill">Linux</span>
+              <span className="skill-pill">Vercel</span>
+              <span className="skill-pill">Figma</span>
+              <span className="skill-pill">Adobe Photoshop</span>
+              <span className="skill-pill">Adobe Illustrator</span>
             </div>
+          </div>
+
+          <div className="bento-card skill-block target-purple-card">
+            <div className="g-stat-display">3.79</div>
+            <p>VERIFIED DIU SYSTEM TRANSCRIPT CGPA RUNNING</p>
+          </div>
+
+        </div>
+      </section>
+
+      <section className="sec-wrapper" id="projects">
+        <div className="section-header-wrap">
+          <div className="decoration-star">✦</div>
+          <h2 className="section-title-text">MY PROJECTS</h2>
+          <div className="decoration-star">✦</div>
+        </div>
+
+        <div className="projects-showcase-grid">
+          
+          <div className="project-display-card bento-card highlight-research-border">
+            <div className="project-meta-top">// CORE THESIS RESEARCH</div>
+            <h3>Uncertainty-Calibrated Glioma Segmentation</h3>
+            <p>Developed a deep learning-based glioma segmentation system capable of processing missing MRI (3D image) modalities while providing uncertainty-aware predictive estimates.</p>
+            <div className="project-tags-row">
+              <span>DEEP LEARNING</span><span>MEDICAL CV</span><span>PYTHON</span>
+            </div>
+          </div>
+
+          <div className="project-display-card bento-card">
+            <div className="project-meta-top">// MOBILE APPLICATION</div>
+            <h3>AI-TravelMate</h3>
+            <p>An AI-powered travel assistant platform for efficient trip planning, automatic bookings, and predictive recommendation metrics through an interactive user layout.</p>
+            <div className="project-tags-row">
+              <span>AI PLATFORM</span><span>MOBILE APP</span><span>UI/UX</span>
+            </div>
+          </div>
+
+          <div className="project-display-card bento-card">
+            <div className="project-meta-top">// WEB APPLICATION</div>
+            <h3>Pet Adoption System</h3>
+            <p>A web framework enabling users full secure database management integration and standard complete CRUD operations for pet profiles.</p>
+            <div className="project-tags-row">
+              <span>REACT</span><span>DATABASE</span><span>CRUD LAYER</span>
+            </div>
+          </div>
+
+          <div className="project-display-card bento-card">
+            <div className="project-meta-top">// COMPUTER NETWORKS</div>
+            <h3>Retail Store Network with NAT</h3>
+            <p>Designed structured commercial architecture mappings utilizing NAT constraints to guarantee isolation configurations and secure server lanes.</p>
+            <div className="project-tags-row">
+              <span>NETWORKING</span><span>NAT</span><span>TRAFFIC SECURITY</span>
+            </div>
+          </div>
+
+          <div className="project-display-card bento-card">
+            <div className="project-meta-top">// OPERATING SYSTEMS</div>
+            <h3>DHCP & Proxy Server Setup</h3>
+            <p>Configured automated network deployment scripts resolving automated IP mapping configurations and resource proxy filters.</p>
+            <div className="project-tags-row">
+              <span>LINUX SYSTEM</span><span>DHCP SERVER</span><span>PROXY LAYER</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section className="sec-wrapper" id="awards">
+        <div className="section-header-wrap">
+          <div className="decoration-star">✦</div>
+          <h2 className="section-title-text">AWARDS & BADGES</h2>
+          <div className="decoration-star">✦</div>
+        </div>
+
+        <div className="awards-bento-grid">
+          <div className="bento-card award-item-card">
+            <div className="award-year">2026</div>
+            <h4>AWS Academy Graduate Cloud Foundations</h4>
+            <p>Certificate of Completion for AWS Academy Cloud Foundations Training Badge framework metrics.</p>
+          </div>
+
+          <div className="bento-card award-item-card purple-glow-border">
+            <div className="award-year">2025</div>
+            <h4>Best Voice Speaker — Inter Hall Debate</h4>
+            <p>Awarded Best Voice Speaker in the Inter Hall Debate Competition at DIU, organized by Creative International.</p>
+          </div>
+
+          <div className="bento-card award-item-card">
+            <div className="award-year">2025</div>
+            <h4>NDAC National Data Analytics Competition</h4>
+            <p>Participated in the Data Visionary analytics challenge organized by the Department of CSE, DIU.</p>
+          </div>
+
+          <div className="bento-card award-item-card">
+            <div className="award-year">2025</div>
+            <h4>Medical Data Analysis Bootcamp</h4>
+            <p>Completed the intensive "Computer Vision and Deep Learning for Medical Data Analysis" program conducted by Health Informatics Research Lab.</p>
           </div>
         </div>
       </section>
 
-      <section className="sec" id="contact">
-        <div className="wrap">
-          <div className="contact-grid">
-            <div>
-              <span className="sec-tag">05 — Reach Out</span>
-              <h2 className="sec-h">Let's Connect</h2>
-              <p className="contact-desc">Open for research partnerships, engineering positions, or any machine learning workflow analytics discussion.</p>
+      <section className="sec-wrapper" id="contact">
+        <div className="bento-contact-layout">
+          <div className="contact-text-pnl">
+            <span className="sec-tag">COMMUNICATION</span>
+            <h2>Let's initiate a <span>connection.</span></h2>
+            <p>Drop a message if you want to collaborate on Machine Learning projects, research pipelines, or web system builds.</p>
+            <div className="contact-direct-link">
+              <strong>Direct Mail:</strong> <a href="mailto:nowrojnishat@gmail.com">nowrojnishat@gmail.com</a>
             </div>
-            <form className="cform" onSubmit={handleSubmit}>
-              <h3>Send a Message</h3>
-              <div className="ff">
-                <label>Your Name</label>
-                <input type="text" placeholder="John Doe" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
-              </div>
-              <div className="ff">
-                <label>Email Address</label>
-                <input type="email" placeholder="john@example.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required />
-              </div>
-              <div className="ff">
-                <label>Message Content</label>
-                <textarea placeholder="Hi Nishat, let's collaborate on..." value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} required></textarea>
-              </div>
-              <button type="submit" className="fsend" style={{ background: formSubmitted ? '#22c55e' : '' }}>
-                {formSubmitted ? 'Message Dispatched! ✓' : 'Send Message →'}
-              </button>
-            </form>
           </div>
+
+          <form className="bento-form-pnl bento-card" onSubmit={handleContact}>
+            <div className="input-group-row">
+              <label>Your Identity</label>
+              <input type="text" placeholder="Your Name..." value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
+            </div>
+            <div className="input-group-row">
+              <label>Email Address</label>
+              <input type="email" placeholder="name@domain.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required />
+            </div>
+            <div className="input-group-row">
+              <label>Message Architecture</label>
+              <textarea placeholder="Write project details or research parameters here..." value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} required></textarea>
+            </div>
+            <button type="submit" className="bento-submit-btn" style={{ background: formSubmitted ? '#22c55e' : '' }}>
+              {formSubmitted ? 'Message Dispatched! ✓' : 'Send Message →'}
+            </button>
+          </form>
         </div>
       </section>
 
       <footer>
-        <div className="fi"><p>© 2026 Noushin Jahan Nishat. All rights reserved.</p></div>
+        <p>© 2026 Noushin Jahan Nishat. All rights reserved. Built with Bento Grid React Engine.</p>
       </footer>
     </div>
   );
