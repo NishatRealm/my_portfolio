@@ -1,15 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
+import emailjs from '@emailjs/browser';
+import profileImg from './assets/profile.jpeg';
 import './App.css';
 
 export default function App() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const [tickerText, setTickerText] = useState('Thesis Pipeline Active');
+  
   const canvasRef = useRef(null);
+  const formRef = useRef(null);
 
   useEffect(() => {
     const alerts = [
       'Research: Glioma Segmentation Active',
+      'ASHO Care Coordinator (Remote, NY)',
       'AWS Cloud Certified',
       'DIU NLP & ML Lab Track Running',
       'CGPA 3.79 Milestone Verified'
@@ -99,11 +105,26 @@ export default function App() {
 
   const handleContact = (e) => {
     e.preventDefault();
-    setFormSubmitted(true);
-    setTimeout(() => {
+    setIsSending(true);
+
+    emailjs.sendForm(
+      'service_3ak00uu',
+      'template_ylnghp5',
+      formRef.current,
+      'NhR5JTSR2tdl5GOFb'
+    )
+    .then(() => {
+      setIsSending(false);
+      setFormSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
-      setFormSubmitted(false);
-    }, 2000);
+      setTimeout(() => {
+        setFormSubmitted(false);
+      }, 4000);
+    }, (error) => {
+      console.error('EmailJS Error:', error);
+      setIsSending(false);
+      alert('Failed to send message. Please try again.');
+    });
   };
 
   return (
@@ -115,6 +136,7 @@ export default function App() {
         <div className="nav-menu">
           <a href="#home">Home</a>
           <a href="#about">About</a>
+          <a href="#experience">Experience</a>
           <a href="#skills">Skills</a>
           <a href="#projects">Projects</a>
           <a href="#awards">Awards</a>
@@ -128,7 +150,7 @@ export default function App() {
           
           <div className="bento-card col-span-2 row-span-2 main-profile-card">
             <div className="profile-badge-strip">
-              <span>SOFTWARE ENGINEER</span>
+              <span>WEB DEVELOPER</span>
               <span className="bullet-sep">•</span>
               <span>RESEARCH ENTHUSIAST</span>
               <span className="bullet-sep">•</span>
@@ -137,7 +159,7 @@ export default function App() {
             
             <div className="profile-main-content-layout">
               <div className="bento-profile-img-frame">
-                <img src="/profile.jpg" alt="Noushin Jahan Nishat" />
+               <img src={profileImg} alt="Noushin Jahan Nishat" />
                 <div className="img-glow-overlay"></div>
               </div>
 
@@ -149,7 +171,7 @@ export default function App() {
             </div>
 
             <p className="profile-desc-p">
-              A passionate and dedicated Computer Science & Engineering Graduate from Daffodil International University with strong skills in software development, technical problem-solving, and deep learning research.
+              A passionate and dedicated Computer Science & Engineering Graduate from Daffodil International University with strong skills in software development, technical problem-solving, and research. Currently working remotely as a Medicaid Care Coordinator at Autism Society Habilitation Organization (ASHO), supporting a professional team based in Jamaica, New York, USA.
             </p>
             <div className="card-corner-icon">+</div>
           </div>
@@ -215,7 +237,7 @@ export default function App() {
             </div>
             <h3>Professional Profile</h3>
             <p>
-              I am a fast learner with strong leadership and communication skills, eager to contribute to team success and grow in a professional environment. Guided by high honesty, discipline, and standard values.
+              I am a fast learner with strong leadership and communication skills, eager to contribute to team success and grow in a professional environment. Experienced in documentation, screening, data management, task coordination, workflow organization, and professional communication.
             </p>
             
             <div className="academic-timeline-wrap">
@@ -233,6 +255,31 @@ export default function App() {
                 <p>Shamlapur High School | <strong>GPA: 5.00 / 5.00</strong></p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="sec-wrapper" id="experience">
+        <div className="section-header-wrap">
+          <span className="section-sub-tag">// CAREER PATH</span>
+          <h2 className="section-title-text">Work Experience</h2>
+        </div>
+
+        <div className="about-bento-layout">
+          <div className="bento-card about-narrative-card">
+            <h3>Medicaid Care Coordinator (Remote)</h3>
+            <p className="award-year" style={{ color: '#a855f7', fontWeight: 'bold' }}>
+              Autism Society Habilitation Organization (ASHO) | 2026 – Present
+            </p>
+            <p style={{ marginTop: '10px' }}>
+              Supporting a professional team based in Jamaica, New York, USA.
+            </p>
+            <ul style={{ marginTop: '10px', paddingLeft: '20px', lineHeight: '1.6' }}>
+              <li>Manage and maintain accurate documentation and records while ensuring information is properly organized for workflow management.</li>
+              <li>Conduct screening and review of relevant information to support appropriate service coordination.</li>
+              <li>Handle and organize digital data, maintaining confidentiality, consistency, and accuracy across records.</li>
+              <li>Coordinate tasks, follow up on assigned activities, and communicate professionally across remote channels.</li>
+            </ul>
           </div>
         </div>
       </section>
@@ -390,27 +437,55 @@ export default function App() {
           <div className="contact-text-pnl">
             <span className="sec-tag">COMMUNICATION</span>
             <h2>Let's initiate a <span>connection.</span></h2>
-            <p>Drop a message if you want to collaborate on Machine Learning projects, research pipelines, or web system builds.</p>
+            <p>Drop a message if you want to collaborate.</p>
             <div className="contact-direct-link">
               <strong>Direct Mail:</strong> <a href="mailto:nowrojnishat@gmail.com">nowrojnishat@gmail.com</a>
             </div>
+            <div className="contact-direct-link" style={{ marginTop: '5px' }}>
+              <strong>Phone:</strong> +8801715821532
+            </div>
           </div>
 
-          <form className="bento-form-pnl bento-card" onSubmit={handleContact}>
+          <form ref={formRef} className="bento-form-pnl bento-card" onSubmit={handleContact}>
             <div className="input-group-row">
               <label>Your Identity</label>
-              <input type="text" placeholder="Your Name..." value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
+              <input 
+                type="text" 
+                name="user_name" 
+                placeholder="Your Name..." 
+                value={formData.name} 
+                onChange={(e) => setFormData({...formData, name: e.target.value})} 
+                required 
+              />
             </div>
             <div className="input-group-row">
               <label>Email Address</label>
-              <input type="email" placeholder="name@domain.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required />
+              <input 
+                type="email" 
+                name="user_email" 
+                placeholder="youremail@gmail.com" 
+                value={formData.email} 
+                onChange={(e) => setFormData({...formData, email: e.target.value})} 
+                required 
+              />
             </div>
             <div className="input-group-row">
               <label>Message Architecture</label>
-              <textarea placeholder="Write project details or research parameters here..." value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} required></textarea>
+              <textarea 
+                name="message" 
+                placeholder="Write your text here..." 
+                value={formData.message} 
+                onChange={(e) => setFormData({...formData, message: e.target.value})} 
+                required
+              ></textarea>
             </div>
-            <button type="submit" className="bento-submit-btn" style={{ background: formSubmitted ? '#22c55e' : '' }}>
-              {formSubmitted ? 'Message Dispatched! ✓' : 'Send Message →'}
+            <button 
+              type="submit" 
+              className="bento-submit-btn" 
+              disabled={isSending}
+              style={{ background: formSubmitted ? '#22c55e' : '' }}
+            >
+              {isSending ? 'Sending Message...' : formSubmitted ? 'Message Dispatched! ✓' : 'Send Message →'}
             </button>
           </form>
         </div>
